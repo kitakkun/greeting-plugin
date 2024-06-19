@@ -4,6 +4,7 @@ dependencyResolutionManagement {
     }
 }
 
+include(":greeting-gradle-plugin")
 include(":greeting-annotations")
 include(":greeting-compiler")
 include(":test")
