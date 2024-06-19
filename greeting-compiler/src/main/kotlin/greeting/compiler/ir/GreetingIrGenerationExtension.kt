@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class GreetingIrGenerationExtension : IrGenerationExtension {
+class GreetingIrGenerationExtension(private val greetingMessage: String?) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        moduleFragment.transformChildrenVoid(GreetingIrElementTransformer(pluginContext))
+        moduleFragment.transformChildrenVoid(GreetingIrElementTransformer(pluginContext, greetingMessage))
     }
 }

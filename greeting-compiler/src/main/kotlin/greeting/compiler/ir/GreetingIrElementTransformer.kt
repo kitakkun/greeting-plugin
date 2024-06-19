@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
-class GreetingIrElementTransformer(private val pluginContext: IrPluginContext) : IrElementTransformerVoid() {
+class GreetingIrElementTransformer(
+    private val pluginContext: IrPluginContext,
+    greetingMessage: String?,
+) : IrElementTransformerVoid() {
     private val printFunctionSymbol = pluginContext.referenceFunctions(
         CallableId(FqName("kotlin.io"), Name.identifier("print")),
     ).first { it.owner.valueParameters.singleOrNull()?.type == pluginContext.irBuiltIns.anyNType }
@@ -27,6 +30,8 @@ class GreetingIrElementTransformer(private val pluginContext: IrPluginContext) :
     private val printlnFunctionSymbol = pluginContext.referenceFunctions(
         CallableId(FqName("kotlin.io"), Name.identifier("println")),
     ).first { it.owner.valueParameters.singleOrNull()?.type == pluginContext.irBuiltIns.anyNType }
+
+    private val greetingMessage = greetingMessage ?: "こんにちは、{name}！"
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
         val origin = declaration.origin as? IrDeclarationOrigin.GeneratedByPlugin
@@ -37,13 +42,13 @@ class GreetingIrElementTransformer(private val pluginContext: IrPluginContext) :
         val irBuilder = pluginContext.irBuiltIns.createIrBuilder(declaration.symbol)
         declaration.body = irBuilder.irBlockBody {
             +irCall(printFunctionSymbol).apply {
-                putValueArgument(index = 0, valueArgument = irString("$parentClassName「こんにちは、"))
+                putValueArgument(index = 0, valueArgument = irString("$parentClassName「${greetingMessage.substringBefore("{")}"))
             }
             +irCall(printFunctionSymbol).apply {
                 putValueArgument(index = 0, valueArgument = irGet(declaration.valueParameters.single()))
             }
             +irCall(printlnFunctionSymbol).apply {
-                putValueArgument(index = 0, valueArgument = irString("！」"))
+                putValueArgument(index = 0, valueArgument = irString("${greetingMessage.substringAfter("}")}」"))
             }
         }
 

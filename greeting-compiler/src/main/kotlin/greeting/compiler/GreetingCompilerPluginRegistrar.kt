@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 class GreetingCompilerPluginRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean = true
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
+        val greetingMessage = configuration.get(GreetingCommandLineProcessor.KEY_GREETING_MESSAGE)
+
         FirExtensionRegistrarAdapter.registerExtension(GreetingFirExtensionRegistrar())
-        IrGenerationExtension.registerExtension(GreetingIrGenerationExtension())
+        IrGenerationExtension.registerExtension(GreetingIrGenerationExtension(greetingMessage))
     }
 }
