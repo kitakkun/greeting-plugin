@@ -4,8 +4,5 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild("build-logic")
 include(":greeting-gradle-plugin")
-include(":greeting-annotations")
-include(":greeting-compiler")
-include(":test")
+project(":greeting-gradle-plugin").projectDir = file("../greeting-gradle-plugin")
